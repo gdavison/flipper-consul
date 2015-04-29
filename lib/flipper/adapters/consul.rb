@@ -4,7 +4,7 @@ require 'flipper'
 
 module Flipper
   module Adapters
-    class ConsulX
+    class Consul
       include Flipper::Adapter
 
       # Private: The key that stores the set of known features.

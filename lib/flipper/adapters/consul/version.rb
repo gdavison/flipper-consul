@@ -1,6 +1,6 @@
 module Flipper
   module Adapters
-    module Consul
+    class Consul
       VERSION = "0.0.1"
     end
   end
