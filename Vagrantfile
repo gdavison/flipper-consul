@@ -9,6 +9,9 @@ Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "hashicorp/precise64"
+  
+#  config.berkshelf.enabled = true
+#  config.berkshelf.berksfile_path = "./Berksfile" 
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -29,19 +32,28 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
-    echo Installing dependencies...
-    sudo apt-get install -y unzip curl
-    echo Fetching Consul...
-    cd /tmp/
-    wget https://dl.bintray.com/mitchellh/consul/0.3.1_linux_amd64.zip -O consul.zip
-    echo Installing Consul...
-    unzip consul.zip
-    sudo chmod +x consul
-    sudo mv consul /usr/bin/consul
-    echo Installing Ruby
-    sudo apt-get install python-software-properties -y
-    sudo apt-add-repository ppa:brightbox/ruby-ng -y
-    sudo apt-get update
-    sudo apt-get install ruby2.1 -y
+    #echo Installing dependencies...
+    #sudo apt-get install -y unzip curl
+    #echo Fetching Consul...
+    #cd /tmp/
+    #wget https://dl.bintray.com/mitchellh/consul/0.3.1_linux_amd64.zip -O consul.zip
+    #echo Installing Consul...
+    #unzip consul.zip
+    #sudo chmod +x consul
+    #sudo mv consul /usr/bin/consul
+    #echo Installing Ruby
+    #sudo apt-get install python-software-properties -y
+    #sudo apt-add-repository ppa:brightbox/ruby-ng -y
+    #sudo apt-get update
+    #sudo apt-get install ruby2.1 -y
+    wget -qO- https://get.docker.com/ | sh
+    
+    # add vagrant to docker group
+    sudo usermod -aG docker vagrant
+    
+    docker run -p 8400:8400 -p 8500:8500 -p 8600:53/udp -h node1 progrium/consul -server -bootstrap -ui-dir /ui
   SHELL
+#  config.vm.provision "chef_zero" do |chef|
+#    chef.add_recipe "consul-cookbook"
+#  end
 end
