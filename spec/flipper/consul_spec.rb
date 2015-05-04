@@ -7,9 +7,9 @@ describe Flipper::Adapters::Consul do
 
   subject { described_class.new(client) }
 
-  #before do
-  #  client.flushdb
-  #end
+  before do
+    client.delete "/?recurse"
+  end
 
   it_should_behave_like 'a flipper adapter'
 end
