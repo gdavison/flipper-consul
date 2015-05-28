@@ -31,25 +31,25 @@ module Flipper
 
       # Public: The set of known features.
       def features
-        read_multiple namespace.nil? ? "#{FeaturesKey}/features" : "#{namespace}/#{FeaturesKey}/features"
+        read_multiple build_path "#{FeaturesKey}/features"
       end
 
       # Public: Adds a feature to the set of known features.
       def add(feature)
-        @client.put(namespace.nil? ? "#{FeaturesKey}/features/#{feature.key}" : "#{namespace}/#{FeaturesKey}/features/#{feature.key}", '1')
+        @client.put build_path("#{FeaturesKey}/features/#{feature.key}"), '1'
         true
       end
 
       # Public: Removes a feature from the set of known features.
       def remove(feature)
-        @client.delete namespace.nil? ? "#{FeaturesKey}/features/#{feature.key}" : "#{namespace}/#{FeaturesKey}/features/#{feature.key}"
+        @client.delete build_path "#{FeaturesKey}/features/#{feature.key}"
         clear feature
         true
       end
 
       # Public: Clears the gate values for a feature.
       def clear(feature)
-        @client.delete namespace.nil? ? "#{feature.key}/?recurse" : "#{namespace}/#{feature.key}/?recurse"
+        @client.delete build_path "#{feature.key}/?recurse"
         true
       end
 
@@ -103,7 +103,7 @@ module Flipper
       def disable(feature, gate, thing)
         case gate.data_type
         when :boolean
-          @client.delete namespace.nil? ? "#{feature}/?recurse" : "#{namespace}/#{feature}/?recurse"
+          @client.delete build_path "#{feature}/?recurse"
         when :integer
           @client.put key(feature, gate), thing.value.to_s
         when :set
@@ -119,18 +119,18 @@ module Flipper
 
       # Private
       def key(feature, gate)
-        if namespace.nil?
-          "#{feature.key}/#{gate.key}"
-        else
-          "#{namespace}/#{feature.key}/#{gate.key}"
-        end
+        build_path "#{feature.key}/#{gate.key}"
       end
       
       def set_member_key(feature, gate, thing)
+        build_path "#{feature.key}/#{gate.key}/#{thing.value.to_s}"
+      end
+      
+      def build_path(key)
         if namespace.nil?
-          "#{feature.key}/#{gate.key}/#{thing.value.to_s}"
+          key
         else
-          "#{namespace}/#{feature.key}/#{gate.key}/#{thing.value.to_s}"
+          "#{namespace}/#{key}"
         end
       end
       
