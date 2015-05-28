@@ -13,7 +13,7 @@ module Flipper
       # Public: The name of the adapter.
       attr_reader :name
             
-      def initialize(client)
+      def initialize(client, namespace='/')
         @client = client
         @name = :consul
       end

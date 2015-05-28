@@ -14,4 +14,10 @@ describe Flipper::Adapters::Consul do
 
     it_should_behave_like 'a flipper adapter'
   end
+  
+  context 'with a namespace' do
+    subject { described_class.new(client, 'foo/bar') }
+
+    it_should_behave_like 'a flipper adapter'
+  end
 end
