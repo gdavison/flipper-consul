@@ -20,5 +20,5 @@ Gem::Specification.new do |spec|
   #spec.require_paths = ["lib"]
   
   spec.add_dependency 'flipper',  '~> 0.7.0.beta4'
-  spec.add_dependency 'diplomat', '~> 0.6.1'
+  spec.add_dependency 'diplomat', '~> 0.11.0'
 end

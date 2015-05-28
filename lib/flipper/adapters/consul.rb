@@ -130,7 +130,7 @@ module Flipper
 
       def read_multiple(key_path)
         begin
-          @client.get "#{key_path}?recurse"
+          @client.get key_path, recurse: true
           values = @client.raw
           values = values.map do |item|
             item['Key'].sub!("#{key_path}/", '')
