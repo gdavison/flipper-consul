@@ -12,10 +12,16 @@ module Flipper
 
       # Public: The name of the adapter.
       attr_reader :name
+      
+      attr_reader :namespace
             
       def initialize(client, namespace='/')
         @client = client
         @name = :consul
+        unless namespace.start_with? '/'
+          namespace.prepend '/'
+        end
+        @namespace = namespace
       end
 
       # Public: The set of known features.
