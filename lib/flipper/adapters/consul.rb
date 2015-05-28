@@ -15,36 +15,41 @@ module Flipper
       
       attr_reader :namespace
             
-      def initialize(client, namespace='/')
+      def initialize(client, namespace=nil)
         @client = client
         @name = :consul
-        unless namespace.start_with? '/'
-          namespace.prepend '/'
+        if !namespace.nil?
+          namespace.strip!
+          if namespace == ''
+            namespace = nil
+          elsif namespace.start_with? '/'
+            namespace[0] = ''
+          end
         end
         @namespace = namespace
       end
 
       # Public: The set of known features.
       def features
-        read_multiple "#{FeaturesKey}/features"
+        read_multiple namespace.nil? ? "#{FeaturesKey}/features" : "#{namespace}/#{FeaturesKey}/features"
       end
 
       # Public: Adds a feature to the set of known features.
       def add(feature)
-        @client.put "#{FeaturesKey}/features/#{feature.key}", '1'
+        @client.put(namespace.nil? ? "#{FeaturesKey}/features/#{feature.key}" : "#{namespace}/#{FeaturesKey}/features/#{feature.key}", '1')
         true
       end
 
       # Public: Removes a feature from the set of known features.
       def remove(feature)
-        @client.delete "#{FeaturesKey}/features/#{feature.key}"
+        @client.delete namespace.nil? ? "#{FeaturesKey}/features/#{feature.key}" : "#{namespace}/#{FeaturesKey}/features/#{feature.key}"
         clear feature
         true
       end
 
       # Public: Clears the gate values for a feature.
       def clear(feature)
-        @client.delete "#{feature.key}/?recurse"
+        @client.delete namespace.nil? ? "#{feature.key}/?recurse" : "#{namespace}/#{feature.key}/?recurse"
         true
       end
 
@@ -98,7 +103,7 @@ module Flipper
       def disable(feature, gate, thing)
         case gate.data_type
         when :boolean
-          @client.delete "#{feature}/?recurse"
+          @client.delete namespace.nil? ? "#{feature}/?recurse" : "#{namespace}/#{feature}/?recurse"
         when :integer
           @client.put key(feature, gate), thing.value.to_s
         when :set
@@ -114,11 +119,19 @@ module Flipper
 
       # Private
       def key(feature, gate)
-        "#{feature.key}/#{gate.key}"
+        if namespace.nil?
+          "#{feature.key}/#{gate.key}"
+        else
+          "#{namespace}/#{feature.key}/#{gate.key}"
+        end
       end
       
       def set_member_key(feature, gate, thing)
-        "#{feature.key}/#{gate.key}/#{thing.value.to_s}"
+        if namespace.nil?
+          "#{feature.key}/#{gate.key}/#{thing.value.to_s}"
+        else
+          "#{namespace}/#{feature.key}/#{gate.key}/#{thing.value.to_s}"
+        end
       end
       
       def read(feature, gate)
