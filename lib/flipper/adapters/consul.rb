@@ -58,11 +58,12 @@ module Flipper
       # Returns a Hash of Flipper::Gate#key => value.
       def get(feature)
         result = {}
+        values = get_feature_values(feature)
 
         feature.gates.each do |gate|
           result[gate.key] = case gate.data_type
           when :boolean, :integer
-            read(feature, gate)
+            values[gate.key.to_s]
           when :set
             read_set(feature, gate)
           else
@@ -134,15 +135,6 @@ module Flipper
         end
       end
       
-      def read(feature, gate)
-        begin
-          value = @client.get key(feature, gate)
-        rescue Diplomat::KeyNotFound
-          value = nil
-        end
-        value
-      end
-      
       def read_set(feature, gate)
         read_multiple key(feature, gate)
       end
@@ -159,6 +151,21 @@ module Flipper
           value = {}.to_set
         end
         value
+      end
+      
+      def get_feature_values(feature)
+        begin
+          key_path = build_path(feature.key)
+          @client.get key_path, recurse: true
+          values = @client.raw
+          result = {}
+          values.each do |item|
+            result[item['Key'].sub!("#{key_path}/", '')] = Base64.decode64(item['Value'])
+          end
+          result
+        rescue Diplomat::KeyNotFound
+          {}
+        end
       end
       
     end
