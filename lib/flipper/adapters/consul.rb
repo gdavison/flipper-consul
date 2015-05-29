@@ -65,7 +65,7 @@ module Flipper
           when :boolean, :integer
             values[gate.key.to_s]
           when :set
-            read_set(feature, gate)
+            gate_values_as_set(values, gate)
           else
             unsupported_data_type gate.data_type
           end
@@ -134,10 +134,6 @@ module Flipper
           "#{namespace}/#{key}"
         end
       end
-      
-      def read_set(feature, gate)
-        read_multiple key(feature, gate)
-      end
 
       def read_multiple(key_path)
         begin
@@ -166,6 +162,13 @@ module Flipper
         rescue Diplomat::KeyNotFound
           {}
         end
+      end
+      
+      def gate_values_as_set(values, gate)
+        regex = /^#{Regexp.escape(gate.key.to_s)}\//
+        keys_for_gate = values.keys.grep regex
+        values = keys_for_gate.map { |key| key.split('/', 2).last }
+        values.to_set
       end
       
     end
