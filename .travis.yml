@@ -1,3 +1,4 @@
+sudo: required # don't run on container-based infrastructure
 language: ruby
 rvm:
     - 2.0.0
