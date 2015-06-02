@@ -7,4 +7,4 @@ before_script:
     - unzip '0.5.2_linux_amd64.zip'
     - ./consul --version
 script:
-    - ../consul agent -server -bootstrap
+    - ./consul agent -server -bootstrap
