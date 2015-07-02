@@ -19,7 +19,7 @@ module Flipper
         @client = client
         @name = :consul
         if !namespace.nil?
-          namespace.strip!
+          namespace = namespace.strip
           if namespace == ''
             namespace = nil
           elsif namespace.start_with? '/'
