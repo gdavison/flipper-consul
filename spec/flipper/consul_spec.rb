@@ -29,6 +29,11 @@ describe Flipper::Adapters::Consul do
       its(:namespace) { is_expected.to eq 'foo' }
     end
     
+    context 'namespace if a frozen string' do
+      subject { described_class.new(client, 'foo'.freeze) }
+      its(:namespace) { is_expected.to eq 'foo' }
+    end
+    
     context 'adapter methods' do
       subject { described_class.new(client, 'foo/bar') }
 
