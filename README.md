@@ -1,6 +1,8 @@
-# Flipper::Consul
+# Flipper Consul
 
-TODO: Write a gem description
+A [Consul](https://www.consul.io) adapter for [Flipper](https://github.com/jnunemaker/flipper).
+
+Uses [Diplomat](https://github.com/WeAreFarmGeek/diplomat) as the Consul client.
 
 ## Installation
 
@@ -14,13 +16,27 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
+Or install it yourself with:
 
     $ gem install flipper-consul
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'flipper/adapters/consul'
+client = Diplomat::Kv.new
+adapter = Flipper::Adapters::Consul.new(client)
+flipper = Flipper.new(adapter)
+```
+
+To avoid polluting the global key/value space, the Flipper data can (and should) be namespaced.
+
+```ruby
+require 'flipper/adapters/consul'
+client = Diplomat::Kv.new
+adapter = Flipper::Adapters::Consul.new(client, 'your/flipper/namespace')
+flipper = Flipper.new(adapter)
+```
 
 ## Contributing
 
