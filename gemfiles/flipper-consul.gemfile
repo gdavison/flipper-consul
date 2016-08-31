@@ -1,0 +1,5 @@
+source 'https://rubygems.org'
+
+gem 'flipper', ENV['FLIPPER_VERSION']
+
+gemspec path: '..'

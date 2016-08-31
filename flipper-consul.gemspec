@@ -16,5 +16,5 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
 
   spec.add_dependency 'flipper',  '~> 0.7'
-  spec.add_dependency 'diplomat', '~> 0.11'
+  spec.add_dependency 'diplomat', '~> 1.0'
 end
