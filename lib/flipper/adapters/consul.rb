@@ -49,7 +49,7 @@ module Flipper
 
       # Public: Clears the gate values for a feature.
       def clear(feature)
-        @client.delete build_path "#{feature.key}/?recurse"
+        @client.delete build_path(feature.key), recurse: true
         true
       end
 
@@ -104,7 +104,7 @@ module Flipper
       def disable(feature, gate, thing)
         case gate.data_type
         when :boolean
-          @client.delete build_path "#{feature}/?recurse"
+          @client.delete build_path(feature), recurse: true
         when :integer
           @client.put key(feature, gate), thing.value.to_s
         when :set
@@ -156,7 +156,7 @@ module Flipper
           values = @client.raw
           result = {}
           values.each do |item|
-            result[item['Key'].sub!("#{key_path}/", '')] = Base64.decode64(item['Value'])
+            result[item['Key'].sub!("#{key_path}/", '')] = item['Value']
           end
           result
         rescue Diplomat::KeyNotFound
