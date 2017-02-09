@@ -6,7 +6,7 @@ describe Flipper::Adapters::Consul do
   let(:client) { Diplomat::Kv.new }
 
   before do
-    client.delete "/?recurse"
+    client.delete '/', recurse: true
   end
   
   context 'with no namespace' do
