@@ -3,5 +3,11 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in flipper-consul.gemspec
 gemspec
 
-gem 'rspec'
-gem 'rspec-its'
+group :test do
+  gem 'rspec'
+  gem 'rspec-its'
+end
+
+group :development do
+  gem 'rubocop'
+end
