@@ -13,7 +13,7 @@ env:
   - FLIPPER_VERSION:  0.9.2
 
 before_script:
-    - wget 'https://releases.hashicorp.com/consul/0.7.4/consul_0.7.4_linux_amd64.zip' --output-document=consul.zip
+    - wget 'https://releases.hashicorp.com/consul/1.0.6/consul_1.0.6_linux_amd64.zip' --output-document=consul.zip
     - unzip 'consul.zip'
     - ./consul --version
 

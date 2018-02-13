@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-CONSUL_VERSION = '0.7.4'
+CONSUL_VERSION = '1.0.6'
 
 Vagrant.configure(2) do |config|
   config.vm.box = "opscode-ubuntu-14.04"
@@ -15,6 +15,6 @@ Vagrant.configure(2) do |config|
     sudo chmod +x consul
     sudo mv consul /usr/bin/consul
   
-    consul agent -server -client 0.0.0.0 -data-dir /tmp/consul -bootstrap-expect 1 -ui -dc dev04 > /var/log/consul.log 2>&1 &
+    consul agent -server -client 0.0.0.0 -data-dir /tmp/consul -bootstrap-expect 1 -ui -datacenter dev04 > /var/log/consul.log 2>&1 &
   SHELL
 end
