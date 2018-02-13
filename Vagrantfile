@@ -4,7 +4,7 @@
 CONSUL_VERSION = '1.0.6'
 
 Vagrant.configure(2) do |config|
-  config.vm.box = "opscode-ubuntu-14.04"
+  config.vm.box = "bento/ubuntu-16.04"
   config.vm.network "forwarded_port", guest: 8500, host: 8500
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
