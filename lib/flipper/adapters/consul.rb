@@ -12,9 +12,9 @@ module Flipper
 
       # Public: The name of the adapter.
       attr_reader :name
-      
+
       attr_reader :namespace
-            
+
       def initialize(client, namespace=nil)
         @client = client
         @name = :consul
@@ -72,7 +72,7 @@ module Flipper
         end
 
         result
-      end      
+      end
 
       # Public: Enables a gate for a given thing.
       #
@@ -83,7 +83,12 @@ module Flipper
       # Returns true.
       def enable(feature, gate, thing)
         case gate.data_type
-        when :boolean, :integer
+        when :boolean
+          @client.txn([
+            {'KV' => {'Verb' => 'delete-tree', 'Key' => build_path(feature.key)}},
+            {'KV' => {'Verb' => 'set', 'Key' => key(feature, gate), 'Value' => thing.value.to_s}}
+          ])
+        when :integer
           @client.put key(feature, gate), thing.value.to_s
         when :set
           @client.put set_member_key(feature, gate, thing), '1'
@@ -104,7 +109,7 @@ module Flipper
       def disable(feature, gate, thing)
         case gate.data_type
         when :boolean
-          @client.delete build_path(feature), recurse: true
+          @client.delete build_path(feature.key), recurse: true
         when :integer
           @client.put key(feature, gate), thing.value.to_s
         when :set
@@ -115,18 +120,18 @@ module Flipper
 
         true
       end
-      
+
       private
 
       # Private
       def key(feature, gate)
         build_path "#{feature.key}/#{gate.key}"
       end
-      
+
       def set_member_key(feature, gate, thing)
         build_path "#{feature.key}/#{gate.key}/#{thing.value.to_s}"
       end
-      
+
       def build_path(key)
         if namespace.nil?
           key
@@ -148,7 +153,7 @@ module Flipper
         end
         value
       end
-      
+
       def get_feature_values(feature)
         begin
           key_path = build_path(feature.key)
@@ -163,14 +168,14 @@ module Flipper
           {}
         end
       end
-      
+
       def gate_values_as_set(values, gate)
         regex = /^#{Regexp.escape(gate.key.to_s)}\//
         keys_for_gate = values.keys.grep regex
         values = keys_for_gate.map { |key| key.split('/', 2).last }
         values.to_set
       end
-      
+
     end
   end
 end
